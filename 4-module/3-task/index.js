@@ -1,5 +1,5 @@
 function highlight(table) {
-  for(let row of table.rows){
+  for(let row of table.tBodies[0].rows){
     for(let cell of row.cells){
       if(cell.cellIndex === 3 && cell.dataset.available === "true"){
         row.classList.add("available");
