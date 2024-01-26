@@ -4,19 +4,15 @@ export default class Carousel {
   constructor(slides) {
     this.slides = slides;
     this._container = this.#getCarousel();
+    this.currentSlideNumber = 0;
+    this.transformValue = 0;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      this.#setArrowHide({
-        arrowRight: this._container.querySelector(".carousel__arrow_right"),
-        arrowLeft: this._container.querySelector(".carousel__arrow_left"),
-        transformValue: this.transformValue,
-        elementsCount: this.slides.length,
-        carouselInnerWidth: this._container.querySelector(".carousel__inner").offsetWidth,
-      });
+    this.#setArrowHide({
+      arrowRight: this._container.querySelector(".carousel__arrow_right"),
+      arrowLeft: this._container.querySelector(".carousel__arrow_left"),
+      elementsCount: this.slides.length,
     });
   }
-
-  transformValue = 0;
 
   get elem(){
     return this._container;
@@ -54,9 +50,9 @@ export default class Carousel {
     return carousel;
   }
 
-  #addToCartEventListener(carousel){
+  #addToCartEventListener = (carousel) => {
     carousel.addEventListener("click", (event) => {
-      if(event.target.closest("button").classList.contains("carousel__button")){
+      if(event.target.closest("button")?.classList.contains("carousel__button")){
         const slideId = event.target.closest(".carousel__slide").dataset.id;
     
         const customEvent = new CustomEvent('product-add', {
@@ -71,7 +67,7 @@ export default class Carousel {
     })
   }
 
-  #addArrowsEventListeners(carousel){
+  #addArrowsEventListeners = (carousel) => {
     carousel.addEventListener("click", (event) => {
       const arrowLeft = carousel.querySelector(".carousel__arrow_left");
       const arrowRight = carousel.querySelector(".carousel__arrow_right");
@@ -81,51 +77,46 @@ export default class Carousel {
       const elementsCount = carouselInner.childElementCount;
 
       if(event.target.closest("div").classList.contains("carousel__arrow_right")){
+        this.currentSlideNumber++;
         // increase the counter for 1 slide width
         this.transformValue += carouselInnerWidth;
         // add the transition
         carouselInner.style.transform = `translateX(-${this.transformValue}px)`;
         // config the arrows visibility
         this.#setArrowHide({
-          arrowRight: arrowRight,
-          arrowLeft: arrowLeft,
-          transformValue: this.transformValue,
-          elementsCount: elementsCount,
-          carouselInnerWidth: carouselInnerWidth,
+          arrowRight,
+          arrowLeft,
+          elementsCount,
         });
         return;
       }
       if(event.target.closest("div").classList.contains("carousel__arrow_left")){
+        this.currentSlideNumber--; // уменьшаем счётчик слайдера
         // decrease the counter for 1 slide width
         this.transformValue -= carouselInnerWidth;
         // add the transition
         carouselInner.style.transform = `translateX(-${this.transformValue}px)`;
         // config the arrows visibility
         this.#setArrowHide({
-          arrowLeft: arrowLeft,
-          arrowRight: arrowRight,
-          transformValue: this.transformValue,
-          elementsCount: elementsCount,
-          carouselInnerWidth: carouselInnerWidth,
+          arrowLeft,
+          arrowRight,
+          elementsCount,
         })
         return;
       }
     })
   }
 
-  #setArrowHide({arrowRight, arrowLeft, transformValue, elementsCount, carouselInnerWidth}){
-    // the arrows are visible by default
-    arrowRight.style.display = 'flex';
-    arrowLeft.style.display = 'flex';
+  #setArrowHide = ({arrowRight, arrowLeft, elementsCount}) => {
     // if there is a first slide - left arrow is hidden, and the right one is shown
-    if(transformValue===0){
+    if(this.currentSlideNumber === 0){
       arrowLeft.style.display = 'none';
-      arrowRight.style.display = 'flex';
+      arrowRight.style.display = '';
     }
     // if there is a last slide - left arrow is shown, and the right one is hidden
-    if(transformValue===carouselInnerWidth*(elementsCount-1)){
+    if(this.currentSlideNumber === elementsCount - 1){
       arrowRight.style.display = 'none';
-      arrowLeft.style.display = 'flex';
+      arrowLeft.style.display = '';
     }
   }
 }

@@ -20,12 +20,36 @@ export default class UserTable {
 
   #createTable(){
     const table = document.createElement("table");
-    table.append(this.#createTableHeading());
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <td>Имя</td>
+          <td>Возраст</td>
+          <td>Зарплата</td>
+          <td>Город</td>
+          <td></td>
+        </tr>
+      </thead>
+    `;
 
-    for(let {name, age, salary, city} of this.rows){
-      const tableRow = this.#createTableRow({name, age, salary, city});
-      table.append(tableRow);
-    }
+    let tableInner = this.rows.map(row => {
+      let cellsWithData = Object.values(row) // для каждого значения из объекта row
+        .map(value => `<td>${value}</td>`) // обернуть его в <td>
+        .join(''); // полученный массив <td>...</td> объединить в одну строку
+
+      return `
+          <tr>
+            ${cellsWithData}
+            <td><button>X</button></td>
+          </tr>
+        `; // возвращаем верстку одной строки
+    }).join('');
+
+    table.innerHTML += `
+      <tbody>
+        ${tableInner}
+      <tbody>
+    `; // оборачиваем полученные строчки в tbody
 
     table.addEventListener("click", (event) => {
       if(event.target.innerHTML === 'X'){
@@ -36,41 +60,41 @@ export default class UserTable {
     return table;
   }
 
-  #createTableHeading(){
-    const tableHeaderRow = document.createElement("tr");
-    const thName = document.createElement("th");
-    const thAge = document.createElement("th");
-    const thSalary = document.createElement("th");
-    const thCity = document.createElement("th");
+  // #createTableHeading(){
+  //   const tableHeaderRow = document.createElement("tr");
+  //   const thName = document.createElement("th");
+  //   const thAge = document.createElement("th");
+  //   const thSalary = document.createElement("th");
+  //   const thCity = document.createElement("th");
 
-    thName.innerHTML = 'Имя';
-    thAge.innerHTML = 'Возраст';
-    thSalary.innerHTML = 'Зарплата';
-    thCity.innerHTML = 'Город';
+  //   thName.innerHTML = 'Имя';
+  //   thAge.innerHTML = 'Возраст';
+  //   thSalary.innerHTML = 'Зарплата';
+  //   thCity.innerHTML = 'Город';
 
-    tableHeaderRow.append(thName, thAge, thSalary, thCity);
+  //   tableHeaderRow.append(thName, thAge, thSalary, thCity);
 
-    return tableHeaderRow
-  }
+  //   return tableHeaderRow
+  // }
 
-  #createTableRow({name, age, salary, city}){
-    const tableRow = document.createElement("tr");
-    const tdName = document.createElement("td");
-    const tdAge = document.createElement("td");
-    const tdSalary = document.createElement("td");
-    const tdCity = document.createElement("td");
-    const tdCross = document.createElement("td");
+  // #createTableRow({name, age, salary, city}){
+  //   const tableRow = document.createElement("tr");
+  //   const tdName = document.createElement("td");
+  //   const tdAge = document.createElement("td");
+  //   const tdSalary = document.createElement("td");
+  //   const tdCity = document.createElement("td");
+  //   const tdCross = document.createElement("td");
 
-    tdName.innerHTML = name;
-    tdAge.innerHTML = age;
-    tdSalary.innerHTML = salary;
-    tdCity.innerHTML = city;
-    tdCross.innerHTML = '<button>X</button>';
+  //   tdName.innerHTML = name;
+  //   tdAge.innerHTML = age;
+  //   tdSalary.innerHTML = salary;
+  //   tdCity.innerHTML = city;
+  //   tdCross.innerHTML = '<button>X</button>';
 
-    tableRow.append(tdName, tdAge, tdSalary, tdCity, tdCross);
+  //   tableRow.append(tdName, tdAge, tdSalary, tdCity, tdCross);
 
-    return tableRow
-  }
+  //   return tableRow
+  // }
 
   get() {
     return this.elem;
